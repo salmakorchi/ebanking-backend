@@ -100,7 +100,7 @@ public class BankAccountServiceImpl implements  BankAccountService{
 
 
     @Override
-    public List<Customer> listCustomer() {
+    public List<Customer> listCustomers() {
         return null;
     }
 
@@ -151,5 +151,10 @@ public class BankAccountServiceImpl implements  BankAccountService{
 
         debit(accountIdSouce,amount,"Transfer To : "+accountIdDestination);
         credit(accountIdDestination,amount,"Transfer from : " +accountIdSouce);
+    }
+    @Override
+    public List<BankAccount> bankAccountLists(){
+
+    return  bankAccountRepository.findAll();
     }
 }
