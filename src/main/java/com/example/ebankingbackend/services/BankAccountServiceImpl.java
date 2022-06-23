@@ -50,7 +50,7 @@ public class BankAccountServiceImpl implements  BankAccountService{
     @Override
     public Customer saveCustomer(Customer customer) {
         log.info("Saving a new Customer");
-        Customer savedCustomer= customerRepository.save(customer);
+        Customer savedCustomer = customerRepository.save(customer);
 
         return savedCustomer;
     }
@@ -59,17 +59,18 @@ public class BankAccountServiceImpl implements  BankAccountService{
     @Override
     public CurrentAccount saveCurrentBankAccount(double initialBalance, double overDraft, Long customerId) throws CustomerNotFoundException {
         Customer customer = customerRepository.findById(customerId).orElse(null);
-        if (customer==null){
+        if (customer==null)
             throw new CustomerNotFoundException("Customer not found");
 
-        }
+
         CurrentAccount currentAccount = new CurrentAccount();
 
         currentAccount.setId(UUID.randomUUID().toString());
         currentAccount.setCreatedAt(new Date());
         currentAccount.setBalance(initialBalance);
-        currentAccount.setCustomer(customer);
         currentAccount.setOverDraft(overDraft);
+        currentAccount.setCustomer(customer);
+
         CurrentAccount savedBankAccount= bankAccountRepository.save(currentAccount);
 
 
@@ -88,8 +89,9 @@ public class BankAccountServiceImpl implements  BankAccountService{
         savingAccount.setId(UUID.randomUUID().toString());
         savingAccount.setCreatedAt(new Date());
         savingAccount.setBalance(initialBalance);
-        savingAccount.setCustomer(customer);
         savingAccount.setInterestRate(interestRate);
+        savingAccount.setCustomer(customer);
+
         SavingAccount savedBankAccount= bankAccountRepository.save(savingAccount);
 
 
@@ -101,7 +103,7 @@ public class BankAccountServiceImpl implements  BankAccountService{
 
     @Override
     public List<Customer> listCustomers() {
-        return null;
+        return customerRepository.findAll();
     }
 
     @Override
@@ -109,7 +111,7 @@ public class BankAccountServiceImpl implements  BankAccountService{
       BankAccount bankAccount= bankAccountRepository.findById(accountId).orElseThrow(()->new BankAccountNotFoundException(" Bank account not found !"));
 
 
-        return null;
+        return bankAccount;
     }
 
     @Override
@@ -153,8 +155,8 @@ public class BankAccountServiceImpl implements  BankAccountService{
         credit(accountIdDestination,amount,"Transfer from : " +accountIdSouce);
     }
     @Override
-    public List<BankAccount> bankAccountLists(){
+    public List<BankAccount> bankAccountList(){
 
-    return  bankAccountRepository.findAll();
+        return  bankAccountRepository.findAll();
     }
 }

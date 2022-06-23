@@ -36,7 +36,7 @@ public class EbankingBackendApplication {
         return args-> {
             Stream.of("khaoula","chaymaa","fatima-ezzahra").forEach(name->{
                 Customer customer = new Customer();
-                customer.setName(name);
+
                 customer.setName(name);
                 customer.setEmail(name + "@gmail.com");
                 bankAccountService.saveCustomer(customer);
@@ -45,7 +45,7 @@ public class EbankingBackendApplication {
                 try {
                     bankAccountService.saveCurrentBankAccount(Math.random()*90000,9000, customer.getId());
                     bankAccountService.saveSavingBankAccount(Math.random()*90000,5.5, customer.getId());
-                    List<BankAccount> bankAccounts=bankAccountService.bankAccountLists() ;
+                    List<BankAccount> bankAccounts=bankAccountService.bankAccountList() ;
                     for (BankAccount bankAccount:bankAccounts){
                         for (int i = 0; i <10 ; i++) {
                                 bankAccountService.credit(bankAccount.getId(),10000+Math.random()*12000,"credit");
