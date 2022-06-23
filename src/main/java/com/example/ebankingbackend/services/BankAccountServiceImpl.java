@@ -1,9 +1,9 @@
 package com.example.ebankingbackend.services;
 
-import com.example.ebankingbackend.entities.BankAccount;
-import com.example.ebankingbackend.entities.CurrentAccount;
-import com.example.ebankingbackend.entities.Customer;
-import com.example.ebankingbackend.entities.SavingAccount;
+import com.example.ebankingbackend.entities.*;
+import com.example.ebankingbackend.enums.OperationType;
+import com.example.ebankingbackend.exceptions.BalanceNotSufficientException;
+import com.example.ebankingbackend.exceptions.BankAccountNotFoundException;
 import com.example.ebankingbackend.exceptions.CustomerNotFoundException;
 import com.example.ebankingbackend.repositories.AccountOperationRepository;
 import com.example.ebankingbackend.repositories.BankAccountRepository;
@@ -46,7 +46,7 @@ public class BankAccountServiceImpl implements  BankAccountService{
     }*/
 
 
-
+//Ajout client
     @Override
     public Customer saveCustomer(Customer customer) {
         log.info("Saving a new Customer");
@@ -55,28 +55,49 @@ public class BankAccountServiceImpl implements  BankAccountService{
         return savedCustomer;
     }
 
+    //creation compte bancaire des deux types
     @Override
-    public BankAccount saveBankAccount(double initialBalance, String type, Long customerId) throws CustomerNotFoundException {
-       BankAccount bankAccount;
-       Customer customer = customerRepository.findById(customerId).orElse(null);
+    public CurrentAccount saveCurrentBankAccount(double initialBalance, double overDraft, Long customerId) throws CustomerNotFoundException {
+        Customer customer = customerRepository.findById(customerId).orElse(null);
         if (customer==null){
             throw new CustomerNotFoundException("Customer not found");
 
         }
-       if(type.equals("current")){
-           bankAccount= new CurrentAccount();
+        CurrentAccount currentAccount = new CurrentAccount();
 
-       }else{
-           bankAccount= new SavingAccount();
-        }
-       bankAccount.setId(UUID.randomUUID().toString());
-       bankAccount.setCreatedAt(new Date());
-       bankAccount.setBalance(initialBalance);
-       bankAccount.setCustomer(customer);
-       bankAccount.
+        currentAccount.setId(UUID.randomUUID().toString());
+        currentAccount.setCreatedAt(new Date());
+        currentAccount.setBalance(initialBalance);
+        currentAccount.setCustomer(customer);
+        currentAccount.setOverDraft(overDraft);
+        CurrentAccount savedBankAccount= bankAccountRepository.save(currentAccount);
 
-        return null;
+
+        return savedBankAccount;
     }
+
+    @Override
+    public SavingAccount saveSavingBankAccount(double initialBalance, double interestRate, Long customerId) throws CustomerNotFoundException {
+        Customer customer = customerRepository.findById(customerId).orElse(null);
+        if (customer==null){
+            throw new CustomerNotFoundException("Customer not found");
+
+        }
+        SavingAccount savingAccount = new SavingAccount();
+
+        savingAccount.setId(UUID.randomUUID().toString());
+        savingAccount.setCreatedAt(new Date());
+        savingAccount.setBalance(initialBalance);
+        savingAccount.setCustomer(customer);
+        savingAccount.setInterestRate(interestRate);
+        SavingAccount savedBankAccount= bankAccountRepository.save(savingAccount);
+
+
+        return savedBankAccount;
+    }
+
+
+
 
     @Override
     public List<Customer> listCustomer() {
@@ -84,22 +105,51 @@ public class BankAccountServiceImpl implements  BankAccountService{
     }
 
     @Override
-    public BankAccount getBankAccount(String accountId) {
+    public BankAccount getBankAccount(String accountId) throws BankAccountNotFoundException {
+      BankAccount bankAccount= bankAccountRepository.findById(accountId).orElseThrow(()->new BankAccountNotFoundException(" Bank account not found !"));
+
+
         return null;
     }
 
     @Override
-    public void debit(String accountId, double amount, String description) {
+    public void debit(String accountId, double amount, String description) throws BankAccountNotFoundException, BalanceNotSufficientException {
+        BankAccount bankAccount= getBankAccount(accountId);
+        if(bankAccount.getBalance()<amount)
+            throw  new BalanceNotSufficientException("Balance not sufficient !");
+
+        AccountOperation accountOperation = new AccountOperation();
+        accountOperation.setType(OperationType.DEBIT);
+        accountOperation.setAmount(amount);
+        accountOperation.setDescription(description);
+        accountOperation.setOperationDate(new Date());
+        accountOperation.setBankAccount(bankAccount);
+        accountOperationRepository.save(accountOperation);
+        bankAccount.setBalance(bankAccount.getBalance()-amount);
+        bankAccountRepository.save(bankAccount);
 
     }
 
     @Override
-    public void credit(String accountId, double amount, String description) {
+    public void credit(String accountId, double amount, String description) throws  BankAccountNotFoundException {
+        BankAccount bankAccount= getBankAccount(accountId);
+
+        AccountOperation accountOperation = new AccountOperation();
+        accountOperation.setType(OperationType.CREDIT);
+        accountOperation.setAmount(amount);
+        accountOperation.setDescription(description);
+        accountOperation.setOperationDate(new Date());
+        accountOperation.setBankAccount(bankAccount);
+        accountOperationRepository.save(accountOperation);
+        bankAccount.setBalance(bankAccount.getBalance()+amount);
+        bankAccountRepository.save(bankAccount);
 
     }
 
     @Override
-    public void transfer(String accountIdSouce, String accountIdDestination, double amount) {
+    public void transfer(String accountIdSouce, String accountIdDestination, double amount) throws BankAccountNotFoundException, BalanceNotSufficientException {
 
+        debit(accountIdSouce,amount,"Transfer To : "+accountIdDestination);
+        credit(accountIdDestination,amount,"Transfer from : " +accountIdSouce);
     }
 }
