@@ -1,5 +1,6 @@
 package com.example.ebankingbackend.web;
 
+import com.example.ebankingbackend.dtos.CustomerDTO;
 import com.example.ebankingbackend.entities.Customer;
 import com.example.ebankingbackend.services.BankAccountService;
 import lombok.AllArgsConstructor;
@@ -16,7 +17,7 @@ import java.util.List;
 public class CustomerRestController {
     private BankAccountService bankAccountService;
     @GetMapping("/customers")
-    public List<Customer> customers(){
+    public List<CustomerDTO> customers(){
         return  bankAccountService.listCustomers();
     }
 }

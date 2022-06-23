@@ -1,10 +1,12 @@
 package com.example.ebankingbackend.services;
 
+import com.example.ebankingbackend.dtos.CustomerDTO;
 import com.example.ebankingbackend.entities.*;
 import com.example.ebankingbackend.enums.OperationType;
 import com.example.ebankingbackend.exceptions.BalanceNotSufficientException;
 import com.example.ebankingbackend.exceptions.BankAccountNotFoundException;
 import com.example.ebankingbackend.exceptions.CustomerNotFoundException;
+import com.example.ebankingbackend.mappers.BankAccountMapperImpl;
 import com.example.ebankingbackend.repositories.AccountOperationRepository;
 import com.example.ebankingbackend.repositories.BankAccountRepository;
 import com.example.ebankingbackend.repositories.CustomerRepository;
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional // make sure you're using the spring transactional method not javax
@@ -37,7 +40,7 @@ public class BankAccountServiceImpl implements  BankAccountService{
      private BankAccountRepository bankAccountRepository;
 
      private AccountOperationRepository accountOperationRepository;
-
+     private BankAccountMapperImpl dtoMapper;
     /* // OR instead of Autowired we use  :
     public BankAccountServiceImpl(CustomerRepository customerRepository, BankAccountRepository bankAccountRepository, AccountOperationRepository accountOperationRepository) {
         this.customerRepository = customerRepository;
@@ -102,8 +105,13 @@ public class BankAccountServiceImpl implements  BankAccountService{
 
 
     @Override
-    public List<Customer> listCustomers() {
-        return customerRepository.findAll();
+    public List<CustomerDTO> listCustomers() {
+        List<Customer> customers= customerRepository.findAll();
+       List<CustomerDTO> customerDTOS= customers.stream()
+               .map(cust->dtoMapper.fromCustomer(cust))
+               .collect(Collectors.toList());
+
+        return customerDTOS;
     }
 
     @Override
