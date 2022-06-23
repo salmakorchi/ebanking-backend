@@ -31,7 +31,7 @@ public class CustomerRestController {
 
     }
     @PutMapping("/customers/{customerId}")
-    public CustomerDTO updateCustomer(@PathVariable Long customerId, CustomerDTO customerDTO){
+    public CustomerDTO updateCustomer(@PathVariable Long customerId,@RequestBody CustomerDTO customerDTO){
         customerDTO.setId(customerId);
         return bankAccountService.UpdateCustomer(customerDTO);
 
