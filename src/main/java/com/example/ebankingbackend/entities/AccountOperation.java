@@ -1,25 +1,24 @@
-package entities;
+package com.example.ebankingbackend.entities;
 
-import enums.OperationType;
+
+import com.example.ebankingbackend.enums.OperationType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Date;
-@Entity
 
-@Data//getters and setters
-//constructors
-@NoArgsConstructor
-@AllArgsConstructor
+@Entity
+@Data @NoArgsConstructor @AllArgsConstructor
 public class AccountOperation {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Date operationDate;
     private double amount;
+    @Enumerated(EnumType.STRING)
     private OperationType type;
     @ManyToOne
-    private  BankAccount bankAccount;
+    private BankAccount bankAccount;
+    private String description;
 }

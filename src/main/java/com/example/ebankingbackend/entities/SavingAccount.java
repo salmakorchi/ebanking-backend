@@ -1,20 +1,15 @@
-package entities;
+package com.example.ebankingbackend.entities;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
-
 @Entity
-@DiscriminatorValue("SA")
-@Data//getters and setters
-//constructors
-@NoArgsConstructor
-@AllArgsConstructor
+//@DiscriminatorValue("SA")     //si on utilise TABLE_PER_CLASS cette annotation n'a plus de sens
+@Data @NoArgsConstructor @AllArgsConstructor
 public class SavingAccount extends BankAccount{
     private double interestRate;
 }
