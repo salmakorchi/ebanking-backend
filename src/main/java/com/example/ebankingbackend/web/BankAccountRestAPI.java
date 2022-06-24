@@ -1,5 +1,6 @@
 package com.example.ebankingbackend.web;
 
+import com.example.ebankingbackend.dtos.AccountOperationDTO;
 import com.example.ebankingbackend.dtos.BankAccountDTO;
 import com.example.ebankingbackend.entities.BankAccount;
 import com.example.ebankingbackend.exceptions.BankAccountNotFoundException;
@@ -26,5 +27,9 @@ public class BankAccountRestAPI {
     @GetMapping("/accounts")
     public List<BankAccountDTO> listAccounts(){
         return  bankAccountService.bankAccountList();
+    }
+    @GetMapping("/accounts/{accountId}/operations")
+    public List<AccountOperationDTO> getHistory(@PathVariable String accountId){
+        return  bankAccountService.accountHistory(accountId);
     }
 }

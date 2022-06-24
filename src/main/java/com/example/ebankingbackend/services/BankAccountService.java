@@ -1,9 +1,6 @@
 package com.example.ebankingbackend.services;
 
-import com.example.ebankingbackend.dtos.BankAccountDTO;
-import com.example.ebankingbackend.dtos.CurrentBankAccountDTO;
-import com.example.ebankingbackend.dtos.CustomerDTO;
-import com.example.ebankingbackend.dtos.SavingBankAccountDTO;
+import com.example.ebankingbackend.dtos.*;
 import com.example.ebankingbackend.entities.BankAccount;
 import com.example.ebankingbackend.entities.CurrentAccount;
 import com.example.ebankingbackend.entities.Customer;
@@ -33,4 +30,7 @@ public interface BankAccountService {
     CustomerDTO UpdateCustomer(CustomerDTO customerDTO);
 
     void deleteCustomer(Long customerId);
+
+    //MAJ compte Bancaire
+    List<AccountOperationDTO> accountHistory(String accountId);
 }

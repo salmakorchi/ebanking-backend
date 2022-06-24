@@ -1,9 +1,6 @@
 package com.example.ebankingbackend.services;
 
-import com.example.ebankingbackend.dtos.BankAccountDTO;
-import com.example.ebankingbackend.dtos.CurrentBankAccountDTO;
-import com.example.ebankingbackend.dtos.CustomerDTO;
-import com.example.ebankingbackend.dtos.SavingBankAccountDTO;
+import com.example.ebankingbackend.dtos.*;
 import com.example.ebankingbackend.entities.*;
 import com.example.ebankingbackend.enums.OperationType;
 import com.example.ebankingbackend.exceptions.BalanceNotSufficientException;
@@ -208,5 +205,13 @@ public class BankAccountServiceImpl implements  BankAccountService{
     public void deleteCustomer(Long customerId){
         customerRepository.deleteById(customerId);
 
+    }
+
+
+    //MAJ compte Bancaire
+    @Override
+    public List<AccountOperationDTO> accountHistory(String accountId){
+        List<AccountOperation> accountOperations = accountOperationRepository.findByBankAccountId(accountId);
+        return accountOperations.stream().map(op->dtoMapper.fromAccountOperation(op)).collect(Collectors.toList());
     }
 }
