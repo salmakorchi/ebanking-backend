@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.util.Date;
 import java.util.List;
@@ -33,7 +34,7 @@ import java.util.stream.Collectors;
 // instead of Logger log = LoggerFactory.getLogger(this.getClass().getName());
 //we can use lombok annotation :
 @Slf4j
-
+@CrossOrigin("*")
 public class BankAccountServiceImpl implements  BankAccountService{
 
   //  @Autowired // DEPENDENCIES INJECTION (best to use constructors instead )
@@ -236,7 +237,7 @@ public class BankAccountServiceImpl implements  BankAccountService{
 
     @Override
     public List<CustomerDTO> searchCustomers(String keyword) {
-       List<Customer> customers =customerRepository.findByNameContains(keyword);
+       List<Customer> customers =customerRepository.searchCustomer(keyword);
       List<CustomerDTO> customerDTOS= customers.stream().map(cust -> dtoMapper.fromCustomer(cust)).collect(Collectors.toList());
       return  customerDTOS;
     }

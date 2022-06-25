@@ -10,7 +10,9 @@ import com.example.ebankingbackend.entities.Customer;
 import com.example.ebankingbackend.entities.SavingAccount;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
+@CrossOrigin("*")
 @Service
 public class BankAccountMapperImpl {
     public CustomerDTO fromCustomer(Customer customer){
